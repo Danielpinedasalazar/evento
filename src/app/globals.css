@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Asegurar que Tailwind no se sobrescriba */
+table {
+  @apply border-collapse w-full;
+}
+
+th, td {
+  @apply border px-4 py-2 text-left;
+}
+
+th {
+  @apply bg-gray-200 text-gray-700;
+}
+
+button {
+  @apply transition duration-200 ease-in-out;
+}
