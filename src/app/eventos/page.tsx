@@ -14,11 +14,14 @@ export default function UsuarioPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [formattedDate, setFormattedDate] = useState<string>("");
+  const [isClient, setIsClient] = useState(false); // ✅ Evita SSR issues
 
   useEffect(() => {
+    setIsClient(true); // ✅ Indicar que estamos en el cliente
+
     const fetchEventos = async () => {
       try {
-        const res = await fetch("/api/eventos");
+        const res = await fetch("/api/evento");
         if (!res.ok) {
           throw new Error("Error al obtener eventos");
         }
@@ -54,15 +57,26 @@ export default function UsuarioPage() {
       <p className="text-gray-600 text-lg mb-6">Selecciona un día para ver los eventos programados.</p>
 
       <div className="bg-white shadow-lg rounded-lg p-6">
-        <Calendar 
-          onChange={(date) => setSelectedDate(date as Date)} 
-          className="react-calendar border-none"
-          tileClassName={({ date }) => 
-            eventos.some((evento) => new Date(evento.fecha).toDateString() === date.toDateString())
-              ? "bg-blue-500 text-white rounded-full"
-              : ""
-          }
-        />
+        {isClient && ( // ✅ Evita renderizar el calendario hasta que esté en el cliente
+          <Calendar
+            onChange={(date) => setSelectedDate(date as Date)}
+            className="react-calendar border-none"
+            tileClassName={({ date }) => {
+              const tieneEvento = eventos.some(
+                (evento) => new Date(evento.fecha).toDateString() === date.toDateString()
+              );
+              return tieneEvento ? "relative text-black" : "";
+            }}
+            tileContent={({ date }) => {
+              const tieneEvento = eventos.some(
+                (evento) => new Date(evento.fecha).toDateString() === date.toDateString()
+              );
+              return tieneEvento ? (
+                <div className="absolute top-1 right-1 w-2 h-2 bg-blue-500 rounded-full"></div>
+              ) : null;
+            }}
+          />
+        )}
       </div>
 
       <div className="mt-8 w-full max-w-lg bg-white shadow-md rounded-lg p-6">
@@ -70,7 +84,9 @@ export default function UsuarioPage() {
         {eventosDelDia.length > 0 ? (
           <ul className="divide-y divide-gray-300">
             {eventosDelDia.map((evento) => (
-              <li key={evento.id} className="py-3 px-4 hover:bg-gray-200 rounded-md cursor-pointer">{evento.titulo}</li>
+              <li key={evento.id} className="py-3 px-4 hover:bg-gray-200 rounded-md cursor-pointer">
+                {evento.titulo}
+              </li>
             ))}
           </ul>
         ) : (

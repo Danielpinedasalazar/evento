@@ -32,7 +32,7 @@ export default function HomePage() {
             href="/api/auth/login"
             className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded-lg text-lg shadow-md transition duration-300"
           >
-            Iniciar sesión con Auth0
+            Iniciar sesión
           </a>
         ) : (
           <div>

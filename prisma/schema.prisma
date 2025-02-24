@@ -12,7 +12,6 @@ model Evento {
   titulo      String
   descripcion String
   fecha       DateTime
-  creadoPor   String
   createdAt   DateTime @default(now())
 }
 
@@ -20,6 +19,10 @@ model Usuario {
   id    String  @id @default(uuid())
   email String  @unique
   name  String
-  role  String  @default("usuario") // Puede ser "usuario" o "admin"
+  role Role @default(User)
 }
-
+enum Role {
+  Admin
+  User
+  Guest
+}
