@@ -41,7 +41,7 @@ export default function HomePage() {
             </p>
             <div className="flex space-x-4 justify-center mb-6">
               <a
-                href="/eventos"
+                href="/usuario"
                 className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300"
               >
                 Ver eventos

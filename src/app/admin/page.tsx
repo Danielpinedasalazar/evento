@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Evento {
   id: string;
@@ -12,11 +13,19 @@ interface Evento {
 export default function AdminPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
 
+  const fetchEventos = async () => {
+    try {
+      const res = await fetch("/api/eventos");
+      if (!res.ok) throw new Error("Error al cargar eventos");
+      const data = await res.json();
+      setEventos(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    fetch("/api/eventos")
-      .then((res) => res.json())
-      .then((data) => setEventos(data))
-      .catch((error) => console.error("Error fetching events:", error));
+    fetchEventos();
   }, []);
 
   return (
@@ -24,9 +33,11 @@ export default function AdminPage() {
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Panel de Administración</h1>
       
       <div className="flex justify-end mb-4">
-        <a href="/admin/nuevo-evento" className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
-          + Crear Evento
-        </a>
+        <Link href="/admin/nuevo-evento">
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
+            + Crear Evento
+          </button>
+        </Link>
       </div>
 
       <div className="overflow-x-auto shadow-lg rounded-lg">
@@ -57,7 +68,7 @@ export default function AdminPage() {
                       className="bg-red-500 text-white px-3 py-1 rounded-lg shadow hover:bg-red-600 transition"
                       onClick={() => {
                         fetch(`/api/eventos/${evento.id}`, { method: "DELETE" })
-                          .then(() => setEventos(eventos.filter((e) => e.id !== evento.id)))
+                          .then(() => fetchEventos()) // ACTUALIZA AUTOMÁTICAMENTE LA LISTA
                           .catch((error) => console.error("Error deleting event:", error));
                       }}
                     >
